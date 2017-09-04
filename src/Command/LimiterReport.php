@@ -118,6 +118,7 @@ class LimiterReport extends Command {
 
 		$data = array_map( function ( $item ) {
 			return [
+				'hits' => count( $item['zero'] ) + count( $item['more'] ),
 				'zero' => count( array_unique( $item['zero'] ) ),
 				'more' => count( array_unique( $item['more'] ) ),
 			];
@@ -130,6 +131,7 @@ class LimiterReport extends Command {
 		foreach ( $data as $date => $item ) {
 			$rows[] = [
 				$date,
+				$item['hits'],
 				$item['zero'] + $item['more'],
 				$item['zero'],
 				$item['more'],
@@ -139,9 +141,10 @@ class LimiterReport extends Command {
 		$table = new Table( $output );
 		$table->setHeaders( [
 			'Date',
-			'Number of Users',
-			'Number of Users with Zero Edits',
-			'Number of Users with One or More Edits',
+			'Hits',
+			'Unique Users',
+			'Unique Users with Zero Edits',
+			'Unique Users with One or More Edits',
 		] );
 		$table->setRows( $rows );
 		$table->render();
