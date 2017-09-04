@@ -1,0 +1,38 @@
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+  app.logstash_user: '%env(LOGSTASH_USER)%'
+  app.logstash_password: '%env(LOGSTASH_PASSWORD)%'
+
+services:
+  app.command.limiter_report:
+    class: App\Command\LimiterReport
+    arguments:
+      - '@app.client_logstash'
+      - '@app.client_mediawiki'
+    tags:
+      - { name: console.command }
+
+  app.client_logstash:
+    class: App\Client\Logstash
+    arguments:
+      - '@app.client_logstash_guzzle'
+      - '@serializer'
+
+  app.client_logstash_guzzle:
+    class: GuzzleHttp\Client
+    arguments:
+      -
+        base_uri: 'https://logstash.wikimedia.org/elasticsearch/'
+        auth:
+          - '%env(LOGSTASH_USER)%'
+          - '%env(LOGSTASH_PASSWORD)%'
+
+  app.client_mediawiki:
+    class: App\Client\MediaWiki
+    arguments:
+      - '@app.client_mediawiki_guzzle'
+      - '@serializer'
+
+  app.client_mediawiki_guzzle:
+    class: GuzzleHttp\Client
