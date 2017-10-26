@@ -34,7 +34,7 @@
     },
     "scripts": {
         "auto-scripts": {
-            "make cache-warmup": "script"
+            "./bin/console cache:warmup": "script"
         },
         "post-install-cmd": [
             "@auto-scripts"
